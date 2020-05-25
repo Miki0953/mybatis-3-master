@@ -53,6 +53,7 @@ import org.apache.ibatis.type.JdbcType;
  */
 public class XMLConfigBuilder extends BaseBuilder {
 
+  // 是否解析标志
   private boolean parsed;
   private final XPathParser parser;
   private String environment;
@@ -78,10 +79,24 @@ public class XMLConfigBuilder extends BaseBuilder {
     this(inputStream, environment, null);
   }
 
+  /**
+   * SqlSessionFactoryBuilder实际通过调用此构造方法来解析全局配置文件
+   * 实例化一个XPathParser对象来将xml文件解析为Document对象
+   * @param inputStream
+   * @param environment
+   * @param props
+   */
   public XMLConfigBuilder(InputStream inputStream, String environment, Properties props) {
     this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
   }
 
+  /**
+   * 将XPathParser实例赋值给实例变量this.parser，
+   * 并且初始化数据源信息environment
+   * @param parser
+   * @param environment
+   * @param props
+   */
   private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
     super(new Configuration());
     ErrorContext.instance().resource("SQL Mapper Configuration");
@@ -91,6 +106,10 @@ public class XMLConfigBuilder extends BaseBuilder {
     this.parser = parser;
   }
 
+  /**
+   * 解析Document对象为Configuration实例并返回
+   * @return
+   */
   public Configuration parse() {
     if (parsed) {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");

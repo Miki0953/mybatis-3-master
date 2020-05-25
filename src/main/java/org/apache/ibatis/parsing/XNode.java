@@ -28,15 +28,22 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * xml文件节点
  * @author Clinton Begin
  */
 public class XNode {
 
+  // 节点对象
   private final Node node;
+  // 节点名称
   private final String name;
+  // 节点的内容
   private final String body;
+  // 节点的属性集合
   private final Properties attributes;
+  // mybatis-config.xml配置文件中<properties>节点下定义的键值对，包括引入的properties文件中的键值对
   private final Properties variables;
+  // 前面介绍的XPathParser对象，该XNode对象由此XPathParser对象生成
   private final XPathParser xpathParser;
 
   public XNode(XPathParser xpathParser, Node node, Properties variables) {
@@ -379,6 +386,11 @@ public class XNode {
     }
   }
 
+  /**
+   * 解析Node的属性信息
+   * @param n
+   * @return
+   */
   private Properties parseAttributes(Node n) {
     Properties attributes = new Properties();
     NamedNodeMap attributeNodes = n.getAttributes();
@@ -392,9 +404,16 @@ public class XNode {
     return attributes;
   }
 
+  /**
+   * 解析Node节点的内容信息
+   * @param node
+   * @return
+   */
   private String parseBody(Node node) {
     String data = getBodyData(node);
+    // 如果data为空，表示当前节点不是文本节点
     if (data == null) {
+      // 处理字节点
       NodeList children = node.getChildNodes();
       for (int i = 0; i < children.getLength(); i++) {
         Node child = children.item(i);
@@ -407,6 +426,11 @@ public class XNode {
     return data;
   }
 
+  /**
+   * 获取节点内容数据
+   * @param child
+   * @return
+   */
   private String getBodyData(Node child) {
     if (child.getNodeType() == Node.CDATA_SECTION_NODE
         || child.getNodeType() == Node.TEXT_NODE) {

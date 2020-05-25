@@ -60,6 +60,12 @@ public class SqlSessionFactoryBuilder {
     }
   }
 
+  /**
+   * mybatis整个框架的入口，创建SqlSessionFactory，采用的
+   * 是建造者模式
+   * @param inputStream
+   * @return
+   */
   public SqlSessionFactory build(InputStream inputStream) {
     return build(inputStream, null, null);
   }
@@ -72,6 +78,13 @@ public class SqlSessionFactoryBuilder {
     return build(inputStream, null, properties);
   }
 
+  /**
+   * 实际是通过创建XMLConfigBuilder来解析全局配置文件
+   * @param inputStream
+   * @param environment
+   * @param properties
+   * @return
+   */
   public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
     try {
       XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);

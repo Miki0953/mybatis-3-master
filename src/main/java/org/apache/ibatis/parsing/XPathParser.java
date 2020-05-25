@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
- * xml文件路径解析器
+ * xml文件路径解析器，作用是将xml文件转换为Document对象
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -50,7 +50,7 @@ public class XPathParser {
   private final Document document;
   // 是否开启验证
   private boolean validation;
-  // 用于加载本地DTD文件
+  // 实体解析器，用于加载本地DTD文件
   private EntityResolver entityResolver;
   // mybatis-config.xml中<properties>标签定义的键值对集合
   private Properties variables;
@@ -127,6 +127,14 @@ public class XPathParser {
     this.document = createDocument(new InputSource(reader));
   }
 
+  /**
+   * 初始化参数，并创建Document对象
+   * 赋值给实例变量document
+   * @param inputStream
+   * @param validation
+   * @param variables
+   * @param entityResolver
+   */
   public XPathParser(InputStream inputStream, boolean validation, Properties variables, EntityResolver entityResolver) {
     commonConstructor(validation, variables, entityResolver);
     this.document = createDocument(new InputSource(inputStream));
@@ -232,19 +240,28 @@ public class XPathParser {
     }
   }
 
+  /**
+   * 创建Document对象，调用createDocument()方法之前一定要先调用 commonConstructor()方法完成初始化
+   * 因为方法中需要使用实例变量validation和entityResolver
+   * @param inputSource
+   * @return
+   */
   private Document createDocument(InputSource inputSource) {
     // important: this must only be called AFTER common constructor
     try {
+      // 创建DocumentBuilderFactory对象
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
       factory.setValidating(validation);
 
+      // 对DocumentBuilderFactory对象进行一系列配置
       factory.setNamespaceAware(false);
       factory.setIgnoringComments(true);
       factory.setIgnoringElementContentWhitespace(false);
       factory.setCoalescing(false);
       factory.setExpandEntityReferences(true);
 
+      // 创建DocumentBuilder对象，并进行配置
       DocumentBuilder builder = factory.newDocumentBuilder();
       builder.setEntityResolver(entityResolver);
       builder.setErrorHandler(new ErrorHandler() {
@@ -263,12 +280,19 @@ public class XPathParser {
           // NOP
         }
       });
+      // 加载xml文件
       return builder.parse(inputSource);
     } catch (Exception e) {
       throw new BuilderException("Error creating document instance.  Cause: " + e, e);
     }
   }
 
+  /**
+   * 参数初始化，在创建document之前一定要调用此方法
+   * @param validation
+   * @param variables
+   * @param entityResolver
+   */
   private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
     this.validation = validation;
     this.entityResolver = entityResolver;

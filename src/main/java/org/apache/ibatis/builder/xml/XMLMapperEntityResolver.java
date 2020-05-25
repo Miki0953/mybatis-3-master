@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Offline entity resolver for the MyBatis DTDs.
- *
+ * 线下本地mybatis DTD文件实体解析器，实现了EntityResolver接口
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
