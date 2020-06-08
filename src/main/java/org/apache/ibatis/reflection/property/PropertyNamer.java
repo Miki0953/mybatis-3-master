@@ -20,6 +20,7 @@ import java.util.Locale;
 import org.apache.ibatis.reflection.ReflectionException;
 
 /**
+ * 用于实体类中getter、setter方法与相应属性的名称转换和相应的一些检测判断
  * @author Clinton Begin
  */
 public final class PropertyNamer {
@@ -28,6 +29,11 @@ public final class PropertyNamer {
     // Prevent Instantiation of Static Class
   }
 
+  /**
+   * get/set方法名转换为相应的属性名称
+   * @param name 方法名
+   * @return
+   */
   public static String methodToProperty(String name) {
     if (name.startsWith("is")) {
       name = name.substring(2);
@@ -44,14 +50,29 @@ public final class PropertyNamer {
     return name;
   }
 
+  /**
+   * 是否是属性（具体见类属性的定义，属性和字段的区别）
+   * @param name
+   * @return
+   */
   public static boolean isProperty(String name) {
     return isGetter(name) || isSetter(name);
   }
 
+  /**
+   * 是否是get方法
+   * @param name
+   * @return
+   */
   public static boolean isGetter(String name) {
     return (name.startsWith("get") && name.length() > 3) || (name.startsWith("is") && name.length() > 2);
   }
 
+  /**
+   * 是否是set方法
+   * @param name
+   * @return
+   */
   public static boolean isSetter(String name) {
     return name.startsWith("set") && name.length() > 3;
   }
