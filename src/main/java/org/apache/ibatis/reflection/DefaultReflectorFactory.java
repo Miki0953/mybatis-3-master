@@ -19,7 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class DefaultReflectorFactory implements ReflectorFactory {
+  // 是否开启对Reflector对象的缓存
   private boolean classCacheEnabled = true;
+  // 使用ConcurrentMap集合实现对Reflector对象的缓存
   private final ConcurrentMap<Class<?>, Reflector> reflectorMap = new ConcurrentHashMap<>();
 
   public DefaultReflectorFactory() {
@@ -37,6 +39,7 @@ public class DefaultReflectorFactory implements ReflectorFactory {
 
   @Override
   public Reflector findForClass(Class<?> type) {
+    // 缓存Reflector对象
     if (classCacheEnabled) {
       // synchronized (type) removed see issue #461
       return reflectorMap.computeIfAbsent(type, Reflector::new);

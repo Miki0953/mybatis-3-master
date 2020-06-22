@@ -119,6 +119,10 @@ public class XMLConfigBuilder extends BaseBuilder {
     return configuration;
   }
 
+  /**
+   * 解析Configuraction,各种配置如环境配置、设置等
+   * @param root
+   */
   private void parseConfiguration(XNode root) {
     try {
       // issue #117 read properties first
@@ -133,6 +137,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
+      // 在objectFactory和objectWrapperFactory之后读取environments配置
       environmentsElement(root.evalNode("environments"));
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
       typeHandlerElement(root.evalNode("typeHandlers"));
@@ -291,6 +296,11 @@ public class XMLConfigBuilder extends BaseBuilder {
     configuration.setShrinkWhitespacesInSql(booleanValueOf(props.getProperty("shrinkWhitespacesInSql"), false));
   }
 
+  /**
+   * 环境配置参数解析
+   * @param context
+   * @throws Exception
+   */
   private void environmentsElement(XNode context) throws Exception {
     if (context != null) {
       if (environment == null) {
@@ -298,9 +308,13 @@ public class XMLConfigBuilder extends BaseBuilder {
       }
       for (XNode child : context.getChildren()) {
         String id = child.getStringAttribute("id");
+        // 校验是否指定环境
         if (isSpecifiedEnvironment(id)) {
+          // 创建事务管理器工厂实例
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
+          // 创建数据源工厂实例
           DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
+          // 获取数据源
           DataSource dataSource = dsFactory.getDataSource();
           Environment.Builder environmentBuilder = new Environment.Builder(id)
               .transactionFactory(txFactory)
@@ -330,8 +344,15 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 创建事务管理器工厂类
+   * @param context
+   * @return
+   * @throws Exception
+   */
   private TransactionFactory transactionManagerElement(XNode context) throws Exception {
     if (context != null) {
+      // 事务管理器的类型：有JDBC和MANAGED
       String type = context.getStringAttribute("type");
       Properties props = context.getChildrenAsProperties();
       TransactionFactory factory = (TransactionFactory) resolveClass(type).getDeclaredConstructor().newInstance();
@@ -341,8 +362,15 @@ public class XMLConfigBuilder extends BaseBuilder {
     throw new BuilderException("Environment declaration requires a TransactionFactory.");
   }
 
+  /**
+   * 创建数据源工厂实例
+   * @param context
+   * @return
+   * @throws Exception
+   */
   private DataSourceFactory dataSourceElement(XNode context) throws Exception {
     if (context != null) {
+      // 数据源类型：UNPOOLED、POOLED、JNDI
       String type = context.getStringAttribute("type");
       Properties props = context.getChildrenAsProperties();
       DataSourceFactory factory = (DataSourceFactory) resolveClass(type).getDeclaredConstructor().newInstance();
@@ -392,11 +420,13 @@ public class XMLConfigBuilder extends BaseBuilder {
           if (resource != null && url == null && mapperClass == null) {
             ErrorContext.instance().resource(resource);
             InputStream inputStream = Resources.getResourceAsStream(resource);
+            // 映射配置文件建造者初始化
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
             mapperParser.parse();
           } else if (resource == null && url != null && mapperClass == null) {
             ErrorContext.instance().resource(url);
             InputStream inputStream = Resources.getUrlAsStream(url);
+            // 映射配置文件解析
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
             mapperParser.parse();
           } else if (resource == null && url == null && mapperClass != null) {

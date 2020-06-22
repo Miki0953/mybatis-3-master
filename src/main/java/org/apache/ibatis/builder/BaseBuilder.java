@@ -29,10 +29,14 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 建造者模式中的建造者接口，其具体建造者有XMLConfigBuilder、XMLMapperBuilder、XMLStatementBuilder等
  * @author Clinton Begin
  */
 public abstract class BaseBuilder {
+  // Configuration是mybatis初始化过程的核心对象，几乎全部的配置信息都会保存到Configuration对象中。它是在mybatis初始化过程中的创建的且全局唯一的
   protected final Configuration configuration;
+  // 在mybatis-config.xml配置文件中，我们可以通过<typeAliases>标签Java类型定义一个缩写名称，仅用于 XML 配置，意在降低冗余的全限定类名书写。
+  // 这些定义的别名都会记录在TypeAliasRegistry对象中
   protected final TypeAliasRegistry typeAliasRegistry;
   protected final TypeHandlerRegistry typeHandlerRegistry;
 

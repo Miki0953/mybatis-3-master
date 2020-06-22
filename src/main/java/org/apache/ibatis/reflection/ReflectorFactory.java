@@ -21,5 +21,10 @@ public interface ReflectorFactory {
 
   void setClassCacheEnabled(boolean classCacheEnabled);
 
+  /**
+   * 为传入的type创建一个Reflector对象
+   * @param type
+   * @return
+   */
   Reflector findForClass(Class<?> type);
 }

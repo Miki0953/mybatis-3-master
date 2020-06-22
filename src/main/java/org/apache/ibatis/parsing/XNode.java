@@ -313,6 +313,10 @@ public class XNode {
     }
   }
 
+  /**
+   * 获取子节点信息
+   * @return
+   */
   public List<XNode> getChildren() {
     List<XNode> children = new ArrayList<>();
     NodeList nodeList = node.getChildNodes();

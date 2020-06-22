@@ -77,6 +77,13 @@ public class XMLMapperBuilder extends BaseBuilder {
     this.builderAssistant.setCurrentNamespace(namespace);
   }
 
+  /**
+   * 
+   * @param inputStream
+   * @param configuration
+   * @param resource
+   * @param sqlFragments
+   */
   public XMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
     this(new XPathParser(inputStream, true, configuration.getVariables(), new XMLMapperEntityResolver()),
         configuration, resource, sqlFragments);

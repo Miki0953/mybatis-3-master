@@ -319,6 +319,11 @@ public class Configuration {
     loadedResources.add(resource);
   }
 
+  /**
+   * 资源是否加载
+   * @param resource
+   * @return
+   */
   public boolean isResourceLoaded(String resource) {
     return loadedResources.contains(resource);
   }
